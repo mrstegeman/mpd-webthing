@@ -206,7 +206,16 @@ class MPDThing extends Thing {
 
     this.client.on('system-mixer', () => {
       // The mixer was updated, so update the volume.
-      this.getVolume().then((v) => this.setVolume(v));
+      this.getVolume().then((v) => this.updateVolume(v));
+    });
+
+    this.client.on('system-options', () => {
+      this.getStatus().then((status) => {
+        if (status !== null) {
+          this.getRepeat(status).then((r) => this.updateRepeat(r));
+          this.getRandom(status).then((r) => this.updateRandom(r));
+        }
+      });
     });
 
     this.ready.then(() => {
@@ -394,6 +403,19 @@ class MPDThing extends Thing {
   }
 
   /**
+   * Get the current volume.
+   */
+  getVolume(status) {
+    if (typeof status === 'undefined') {
+      return this.getStatus().then((s) => this.getVolume(s));
+    } else if (status === null) {
+      return Promise.resolve(null);
+    } else {
+      return Promise.resolve(parseInt(status.volume));
+    }
+  }
+
+  /**
    * Get the current 'random' state.
    */
   getRandom(status) {
@@ -416,19 +438,6 @@ class MPDThing extends Thing {
       return Promise.resolve(null);
     } else {
       return Promise.resolve(status.repeat === '1');
-    }
-  }
-
-  /**
-   * Get the current volume.
-   */
-  getVolume(status) {
-    if (typeof status === 'undefined') {
-      return this.getStatus().then((s) => this.getVolume(s));
-    } else if (status === null) {
-      return Promise.resolve(null);
-    } else {
-      return Promise.resolve(parseInt(status.volume));
     }
   }
 
@@ -516,6 +525,42 @@ class MPDThing extends Thing {
    */
   setRepeat(repeat) {
     return this.sendCommand('repeat', repeat ? 1 : 0);
+  }
+
+  /**
+   * Update the volume property.
+   */
+  updateVolume(volume) {
+    if (typeof volume === 'undefined') {
+      return this.getVolume().then((v) => this.updateVolume(v));
+    }
+
+    const prop = this.findProperty('volume');
+    return prop.value.notifyOfExternalUpdate(volume);
+  }
+
+  /**
+   * Update the random property.
+   */
+  updateRandom(random) {
+    if (typeof random === 'undefined') {
+      return this.getRandom().then((r) => this.updateRandom(r));
+    }
+
+    const prop = this.findProperty('random');
+    return prop.value.notifyOfExternalUpdate(random);
+  }
+
+  /**
+   * Update the repeat property.
+   */
+  updateRepeat(repeat) {
+    if (typeof repeat === 'undefined') {
+      return this.getRepeat().then((r) => this.updateRepeat(r));
+    }
+
+    const prop = this.findProperty('repeat');
+    return prop.value.notifyOfExternalUpdate(repeat);
   }
 
   /**

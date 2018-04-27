@@ -272,6 +272,15 @@ class MPDThing(Thing):
         """Get the current status."""
         return self.send_command('status')
 
+    def get_volume(self, status=None):
+        """Get the current volume."""
+        if status is None:
+            status = self.get_status()
+            if status is None:
+                return None
+
+        return int(status['volume'])
+
     def get_random(self, status=None):
         """Get the current 'random' state."""
         if status is None:
@@ -289,15 +298,6 @@ class MPDThing(Thing):
                 return None
 
         return bool(int(status['repeat']))
-
-    def get_volume(self, status=None):
-        """Get the current volume."""
-        if status is None:
-            status = self.get_status()
-            if status is None:
-                return None
-
-        return int(status['volume'])
 
     def get_state(self, status=None):
         """Get the current playback state."""
@@ -359,6 +359,36 @@ class MPDThing(Thing):
     def set_repeat(self, repeat):
         """Set the 'repeat' state."""
         self.send_command('repeat', int(repeat))
+
+    def update_volume(self, volume=None):
+        """Update the volume property."""
+        if volume is None:
+            volume = self.get_volume()
+            if state is None:
+                return
+
+        prop = self.find_property('volume')
+        prop.value.notify_of_external_update(volume)
+
+    def update_random(self, random=None):
+        """Update the random property."""
+        if random is None:
+            random = self.get_random()
+            if state is None:
+                return
+
+        prop = self.find_property('random')
+        prop.value.notify_of_external_update(random)
+
+    def update_repeat(self, repeat=None):
+        """Update the repeat property."""
+        if repeat is None:
+            repeat = self.get_repeat()
+            if state is None:
+                return
+
+        prop = self.find_property('repeat')
+        prop.value.notify_of_external_update(repeat)
 
     def update_state(self, state=None):
         """Update the playback state property."""
@@ -483,7 +513,14 @@ class MPDThing(Thing):
 
                     elif subsystem == 'mixer':
                         # The mixer was updated, so update the volume.
-                        self.set_volume(self.get_volume())
+                        self.update_volume(self.get_volume())
+
+                    elif subsystem == 'options':
+                        # One of the options was updated, so check repeat and
+                        # random.
+                        status = self.get_status()
+                        self.update_repeat(self.get_repeat(status))
+                        self.update_random(self.get_random(status))
 
         tornado.ioloop.IOLoop.current().call_later(1, self.idle)
 
