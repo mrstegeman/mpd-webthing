@@ -89,7 +89,8 @@ class QueueRandomAction(Action):
             # Since we just updated the playlist, emit an event.
             playlist = self.thing.get_playlist()
             if playlist is not None:
-                self.thing.add_event(PlaylistUpdatedEvent(self, playlist))
+                self.thing.add_event(
+                    PlaylistUpdatedEvent(self.thing, playlist))
 
 
 class PlaylistUpdatedEvent(Event):
