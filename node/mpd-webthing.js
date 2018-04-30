@@ -125,7 +125,7 @@ class QueueRandomAction extends Action {
    */
   performAction() {
     return this.thing.list().then((songs) => {
-      let promises = [];
+      const promises = [];
 
       if (songs) {
         for (let i = 0; i < this.input.count; ++i) {
@@ -384,12 +384,10 @@ class MPDThing extends Thing {
         if (err) {
           console.log(err);
           resolve(null);
+        } else if (['list', 'playlistinfo'].includes(command)) {
+          resolve(mpd.parseArrayMessage(msg));
         } else {
-          if (['list', 'playlistinfo'].includes(command)) {
-            resolve(mpd.parseArrayMessage(msg));
-          } else {
-            resolve(mpd.parseKeyValueMessage(msg));
-          }
+          resolve(mpd.parseKeyValueMessage(msg));
         }
       });
     });
