@@ -81,7 +81,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.mrstegeman.MPDWebThing</mainClass>
+                            <mainClass>com.github.mrstegeman.MPDThing</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

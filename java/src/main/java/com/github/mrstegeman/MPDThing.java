@@ -30,7 +30,7 @@ import java.util.UUID;
 /**
  * MPD client represented as a Web Thing.
  */
-public class MPDWebThing extends Thing {
+public class MPDThing extends Thing {
     private MPD client;
     private StandAloneMonitor monitor;
     private Value stateValue;
@@ -44,7 +44,7 @@ public class MPDWebThing extends Thing {
     /**
      * Initialize the thing.
      */
-    public MPDWebThing() {
+    public MPDThing() {
         super("MPD", "musicPlayer", "Music Player Daemon");
 
         // Connect to MPD.
@@ -229,7 +229,7 @@ public class MPDWebThing extends Thing {
      * Create our MPD Web Thing and run the server.
      */
     public static void main(String[] args) {
-        MPDWebThing thing = new MPDWebThing();
+        MPDThing thing = new MPDThing();
 
         List<Thing> things = new ArrayList<>();
         things.add(thing);
@@ -541,7 +541,7 @@ public class MPDWebThing extends Thing {
          */
         @Override
         public void performAction() {
-            ((MPDWebThing)this.getThing()).play();
+            ((MPDThing)this.getThing()).play();
         }
     }
 
@@ -561,7 +561,7 @@ public class MPDWebThing extends Thing {
          */
         @Override
         public void performAction() {
-            ((MPDWebThing)this.getThing()).pause();
+            ((MPDThing)this.getThing()).pause();
         }
     }
 
@@ -581,7 +581,7 @@ public class MPDWebThing extends Thing {
          */
         @Override
         public void performAction() {
-            ((MPDWebThing)this.getThing()).stop();
+            ((MPDThing)this.getThing()).stop();
         }
     }
 
@@ -601,7 +601,7 @@ public class MPDWebThing extends Thing {
          */
         @Override
         public void performAction() {
-            ((MPDWebThing)this.getThing()).next();
+            ((MPDThing)this.getThing()).next();
         }
     }
 
@@ -621,7 +621,7 @@ public class MPDWebThing extends Thing {
          */
         @Override
         public void performAction() {
-            ((MPDWebThing)this.getThing()).previous();
+            ((MPDThing)this.getThing()).previous();
         }
     }
 
@@ -641,7 +641,7 @@ public class MPDWebThing extends Thing {
          */
         @Override
         public void performAction() {
-            MPDWebThing thing = (MPDWebThing)this.getThing();
+            MPDThing thing = (MPDThing)this.getThing();
             Random random = new Random();
             List<MPDFile> songs = thing.list();
 
