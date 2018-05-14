@@ -1,0 +1,15 @@
+[package]
+name = "mpd-webthing"
+version = "1.0.0"
+authors = ["Michael Stegeman"]
+
+[dependencies]
+mpd = "0.0"
+rand = "0.4"
+serde_json = "1.0"
+uuid = { version = "0.6", features = ["v4"] }
+webthing = { git = "https://github.com/mozilla-iot/webthing-rust" }
+
+[[bin]]
+name = "mpd-webthing"
+path = "src/mpd-webthing.rs"
