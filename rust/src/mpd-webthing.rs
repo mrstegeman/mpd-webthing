@@ -20,7 +20,7 @@ use uuid::Uuid;
 use webthing::action::{Action, BaseAction};
 use webthing::event::{BaseEvent, Event};
 use webthing::property::{BaseProperty, Property, ValueForwarder};
-use webthing::server::{ActionGenerator, WebThingServer};
+use webthing::server::{ActionGenerator, ThingsType, WebThingServer};
 use webthing::thing::{BaseThing, Thing};
 
 struct PlayAction(BaseAction);
@@ -1418,7 +1418,6 @@ impl ActionGenerator for Generator {
 fn main() {
     let thing: Arc<RwLock<Box<Thing + 'static>>> = Arc::new(RwLock::new(Box::new(MPDThing::new())));
     let cloned = thing.clone();
-    let things: Vec<Arc<RwLock<Box<Thing + 'static>>>> = vec![thing];
     let mut last_playlist = "".to_owned();
 
     thread::spawn(move || loop {
@@ -1469,6 +1468,11 @@ fn main() {
         }
     });
 
-    let server = WebThingServer::new(things, None, Some(8888), None, Box::new(Generator));
+    let server = WebThingServer::new(
+        ThingsType::Single(thing),
+        Some(8888),
+        None,
+        Box::new(Generator),
+    );
     server.start();
 }

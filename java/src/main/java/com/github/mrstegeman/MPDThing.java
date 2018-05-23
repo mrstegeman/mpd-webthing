@@ -231,11 +231,10 @@ public class MPDThing extends Thing {
     public static void main(String[] args) {
         MPDThing thing = new MPDThing();
 
-        List<Thing> things = new ArrayList<>();
-        things.add(thing);
-
         try {
-            WebThingServer server = new WebThingServer(things, null, 8888);
+            WebThingServer server =
+                    new WebThingServer(new WebThingServer.SingleThing(thing),
+                                       8888);
 
             Runtime.getRuntime()
                    .addShutdownHook(new Thread(() -> server.stop()));

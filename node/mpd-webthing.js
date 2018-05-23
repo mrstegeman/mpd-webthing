@@ -7,6 +7,7 @@ const {
   Action,
   Event,
   Property,
+  SingleThing,
   Thing,
   Value,
   WebThingServer,
@@ -707,7 +708,7 @@ class MPDThing extends Thing {
 function runServer() {
   const thing = new MPDThing();
 
-  const server = new WebThingServer([thing], null, 8888);
+  const server = new WebThingServer(new SingleThing(thing), 8888);
 
   process.on('SIGINT', () => {
     server.stop();

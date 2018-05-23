@@ -3,7 +3,8 @@
 from mpd import CommandError, MPDClient
 from random import choice
 from select import select
-from webthing import Action, Event, Property, Thing, Value, WebThingServer
+from webthing import (Action, Event, SingleThing, Property, Thing, Value,
+                      WebThingServer)
 import socket
 import sys
 import tornado.ioloop
@@ -529,7 +530,7 @@ def run_server():
     """Create our MPD Web Thing and run the server."""
     thing = MPDThing()
 
-    server = WebThingServer([thing], port=8888)
+    server = WebThingServer(SingleThing(thing), port=8888)
 
     try:
         server.start()
