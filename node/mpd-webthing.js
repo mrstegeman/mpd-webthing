@@ -167,7 +167,7 @@ class MPDThing extends Thing {
    * Initialize the thing.
    */
   constructor() {
-    super('MPD', 'musicPlayer', 'Music Player Daemon');
+    super('MPD', [], 'Music Player Daemon');
 
     // Connect to MPD.
     this.client = mpd.connect({host: 'localhost', port: 6600});
@@ -238,6 +238,7 @@ class MPDThing extends Thing {
                            description: 'Playback volume',
                            minimum: 0,
                            maximum: 100,
+                           label: 'Volume',
                          }));
         });
 
@@ -250,6 +251,7 @@ class MPDThing extends Thing {
                          {
                            type: 'boolean',
                            description: 'Repeat mode',
+                           label: 'Repeat',
                          }));
         });
 
@@ -262,6 +264,7 @@ class MPDThing extends Thing {
                          {
                            type: 'boolean',
                            description: 'Random mode',
+                           label: 'Random',
                          }));
         });
 
@@ -274,6 +277,7 @@ class MPDThing extends Thing {
                          {
                            type: 'string',
                            description: 'Current playback state',
+                           label: 'State',
                          }));
         });
       });
@@ -293,6 +297,7 @@ class MPDThing extends Thing {
                          {
                            type: 'string',
                            description: 'Artist of current song',
+                           label: 'Artist',
                          }));
         });
 
@@ -305,6 +310,7 @@ class MPDThing extends Thing {
                          {
                            type: 'string',
                            description: 'Album current song belongs to',
+                           label: 'Album',
                          }));
         });
 
@@ -317,33 +323,49 @@ class MPDThing extends Thing {
                          {
                            type: 'string',
                            description: 'Title of current song',
+                           label: 'Title',
                          }));
         });
       });
 
       // Add a 'play' action.
       this.addAvailableAction('play',
-                              {description: 'Start playback'},
+                              {
+                                description: 'Start playback',
+                                label: 'Play',
+                              },
                               PlayAction);
 
       // Add a 'pause' action.
       this.addAvailableAction('pause',
-                              {description: 'Pause playback'},
+                              {
+                                description: 'Pause playback',
+                                label: 'Pause',
+                              },
                               PauseAction);
 
       // Add a 'stop' action.
       this.addAvailableAction('stop',
-                              {description: 'Stop playback'},
+                              {
+                                description: 'Stop playback',
+                                label: 'Stop',
+                              },
                               StopAction);
 
       // Add a 'next' option.
       this.addAvailableAction('next',
-                              {description: 'Skip to next song'},
+                              {
+                                description: 'Skip to next song',
+                                label: 'Next',
+                              },
                               NextAction);
 
       // Add a 'previous' action.
       this.addAvailableAction('previous',
-                              {description: 'Skip to previous song'},
+                              {
+                                description: 'Skip to previous song',
+                                label: 'Previous',
+                              },
                               PreviousAction);
 
       // Add a 'queueRandom' action.
@@ -351,6 +373,7 @@ class MPDThing extends Thing {
         'queueRandom',
         {
           description: 'Queue a series of random songs',
+          label: 'Queue Random',
           input: {
             type: 'object',
             required: [

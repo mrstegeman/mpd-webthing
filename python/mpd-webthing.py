@@ -107,7 +107,7 @@ class MPDThing(Thing):
 
     def __init__(self):
         """Initialize the thing."""
-        Thing.__init__(self, 'MPD', 'musicPlayer', 'Music Player Daemon')
+        Thing.__init__(self, 'MPD', [], 'Music Player Daemon')
 
         # Connect to MPD.
         self.client = MPDClient()
@@ -132,6 +132,7 @@ class MPDThing(Thing):
                          'description': 'Playback volume',
                          'minimum': 0,
                          'maximum': 100,
+                         'label': 'Volume',
                      }))
 
         # Add a 'repeat' property.
@@ -142,6 +143,7 @@ class MPDThing(Thing):
                      metadata={
                          'type': 'boolean',
                          'description': 'Repeat mode',
+                         'label': 'Repeat',
                      }))
 
         # Add a 'random' property.
@@ -152,6 +154,7 @@ class MPDThing(Thing):
                      metadata={
                          'type': 'boolean',
                          'description': 'Random mode',
+                         'label': 'Random',
                      }))
 
         # Add a 'state' property, which indicates playback state.
@@ -162,6 +165,7 @@ class MPDThing(Thing):
                      metadata={
                          'type': 'string',
                          'description': 'Current playback state',
+                         'label': 'State',
                      }))
 
         # Add an 'artist' property.
@@ -172,6 +176,7 @@ class MPDThing(Thing):
                      metadata={
                          'type': 'string',
                          'description': 'Artist of current song',
+                         'label': 'Artist',
                      }))
 
         # Add an 'album' property.
@@ -182,6 +187,7 @@ class MPDThing(Thing):
                      metadata={
                          'type': 'string',
                          'description': 'Album current song belongs to',
+                         'label': 'Album',
                      }))
 
         # Add a 'title' property.
@@ -192,54 +198,73 @@ class MPDThing(Thing):
                      metadata={
                          'type': 'string',
                          'description': 'Title of current song',
+                         'label': 'Title',
                      }))
 
         # Add a 'play' action.
         self.add_available_action(
             'play',
-            {'description': 'Start playback'},
+            {
+                'description': 'Start playback',
+                'label': 'Play',
+            },
             PlayAction)
 
         # Add a 'pause' action.
         self.add_available_action(
             'pause',
-            {'description': 'Pause playback'},
+            {
+                'description': 'Pause playback',
+                'label': 'Pause',
+            },
             PauseAction)
 
         # Add a 'stop' action.
         self.add_available_action(
             'stop',
-            {'description': 'Stop playback'},
+            {
+                'description': 'Stop playback',
+                'label': 'Stop',
+            },
             StopAction)
 
         # Add a 'next' option.
         self.add_available_action(
             'next',
-            {'description': 'Skip to next song'},
+            {
+                'description': 'Skip to next song',
+                'label': 'Next',
+            },
             NextAction)
 
         # Add a 'previous' action.
         self.add_available_action(
             'previous',
-            {'description': 'Skip to previous song'},
+            {
+                'description': 'Skip to previous song',
+                'label': 'Previous',
+            },
             PreviousAction)
 
         # Add a 'queueRandom' action.
         self.add_available_action(
             'queueRandom',
-            {'description': 'Queue a series of random songs',
-             'input': {
-                 'type': 'object',
-                 'required': [
-                     'count',
-                 ],
-                 'properties': {
-                     'count': {
-                         'type': 'number',
-                         'minimum': 1,
-                     },
-                 },
-             }},
+            {
+                'description': 'Queue a series of random songs',
+                'label': 'Queue Random',
+                'input': {
+                    'type': 'object',
+                    'required': [
+                        'count',
+                    ],
+                    'properties': {
+                        'count': {
+                            'type': 'number',
+                            'minimum': 1,
+                        },
+                    },
+                },
+            },
             QueueRandomAction)
 
         # Add a 'playlistUpdated' event.
@@ -365,7 +390,7 @@ class MPDThing(Thing):
         """Update the volume property."""
         if volume is None:
             volume = self.get_volume()
-            if state is None:
+            if volume is None:
                 return
 
         prop = self.find_property('volume')
@@ -375,7 +400,7 @@ class MPDThing(Thing):
         """Update the random property."""
         if random is None:
             random = self.get_random()
-            if state is None:
+            if random is None:
                 return
 
         prop = self.find_property('random')
@@ -385,7 +410,7 @@ class MPDThing(Thing):
         """Update the repeat property."""
         if repeat is None:
             repeat = self.get_repeat()
-            if state is None:
+            if repeat is None:
                 return
 
         prop = self.find_property('repeat')

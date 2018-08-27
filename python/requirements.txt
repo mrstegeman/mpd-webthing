@@ -1,2 +1,2 @@
-python-mpd2
-webthing
+python-mpd2>=1.0.0
+webthing>=0.7.0

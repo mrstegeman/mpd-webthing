@@ -45,7 +45,7 @@ public class MPDThing extends Thing {
      * Initialize the thing.
      */
     public MPDThing() {
-        super("MPD", "musicPlayer", "Music Player Daemon");
+        super("MPD", new ArrayList<>(), "Music Player Daemon");
 
         // Connect to MPD.
         this.client = new MPD.Builder().server("localhost").port(6600).build();
@@ -94,6 +94,7 @@ public class MPDThing extends Thing {
         volumeMetadata.put("description", "Playback volume");
         volumeMetadata.put("minimum", 0);
         volumeMetadata.put("maximum", 100);
+        volumeMetadata.put("label", "Volume");
         this.volumeValue =
                 new Value(status.getVolume(), v -> this.setVolume((int)v));
         this.addProperty(new Property(this,
@@ -105,6 +106,7 @@ public class MPDThing extends Thing {
         Map<String, Object> repeatMetadata = new HashMap<>();
         repeatMetadata.put("type", "boolean");
         repeatMetadata.put("description", "Repeat mode");
+        repeatMetadata.put("label", "Repeat");
         this.repeatValue =
                 new Value(status.isRepeat(), r -> this.setRepeat((boolean)r));
         this.addProperty(new Property(this,
@@ -116,6 +118,7 @@ public class MPDThing extends Thing {
         Map<String, Object> randomMetadata = new HashMap<>();
         randomMetadata.put("type", "boolean");
         randomMetadata.put("description", "Random mode");
+        randomMetadata.put("label", "Random");
         this.randomValue =
                 new Value(status.isRandom(), r -> this.setRandom((boolean)r));
         this.addProperty(new Property(this,
@@ -127,6 +130,7 @@ public class MPDThing extends Thing {
         Map<String, Object> stateMetadata = new HashMap<>();
         stateMetadata.put("type", "string");
         stateMetadata.put("description", "Current playback state");
+        stateMetadata.put("label", "State");
         this.stateValue = new Value(status.getState());
         this.addProperty(new Property(this,
                                       "state",
@@ -139,6 +143,7 @@ public class MPDThing extends Thing {
         Map<String, Object> artistMetadata = new HashMap<>();
         artistMetadata.put("type", "string");
         artistMetadata.put("description", "Artist of current song");
+        artistMetadata.put("label", "Artist");
         this.artistValue = new Value(song.getArtistName());
         this.addProperty(new Property(this,
                                       "artist",
@@ -149,6 +154,7 @@ public class MPDThing extends Thing {
         Map<String, Object> albumMetadata = new HashMap<>();
         albumMetadata.put("type", "string");
         albumMetadata.put("description", "Album current song belongs to");
+        albumMetadata.put("label", "Album");
         this.albumValue = new Value(song.getAlbumName());
         this.addProperty(new Property(this,
                                       "album",
@@ -159,6 +165,7 @@ public class MPDThing extends Thing {
         Map<String, Object> titleMetadata = new HashMap<>();
         titleMetadata.put("type", "string");
         titleMetadata.put("description", "Title of current song");
+        titleMetadata.put("label", "Title");
         this.titleValue = new Value(song.getTitle());
         this.addProperty(new Property(this,
                                       "title",
@@ -168,26 +175,31 @@ public class MPDThing extends Thing {
         // Add a 'play' action.
         Map<String, Object> playMetadata = new HashMap<>();
         playMetadata.put("description", "Start playback");
+        playMetadata.put("label", "Play");
         this.addAvailableAction("play", playMetadata, PlayAction.class);
 
         // Add a 'pause' action.
         Map<String, Object> pauseMetadata = new HashMap<>();
         pauseMetadata.put("description", "Pause playback");
+        pauseMetadata.put("label", "Pause");
         this.addAvailableAction("pause", pauseMetadata, PauseAction.class);
 
         // Add a 'stop' action.
         Map<String, Object> stopMetadata = new HashMap<>();
         stopMetadata.put("description", "Stop playback");
+        stopMetadata.put("label", "Stop");
         this.addAvailableAction("stop", stopMetadata, StopAction.class);
 
         // Add a 'next' option.
         Map<String, Object> nextMetadata = new HashMap<>();
         nextMetadata.put("description", "Skip to next song");
+        nextMetadata.put("label", "Next");
         this.addAvailableAction("next", nextMetadata, NextAction.class);
 
         // Add a 'previous' action.
         Map<String, Object> previousMetadata = new HashMap<>();
         previousMetadata.put("description", "Skip to previous song");
+        previousMetadata.put("label", "Previous");
         this.addAvailableAction("previous",
                                 previousMetadata,
                                 PreviousAction.class);
@@ -196,6 +208,7 @@ public class MPDThing extends Thing {
         Map<String, Object> queueRandomMetadata = new HashMap<>();
         queueRandomMetadata.put("description",
                                 "Queue a series of random songs");
+        queueRandomMetadata.put("label", "Queue Random");
         Map<String, Object> queueRandomInputMetadata = new HashMap<>();
         queueRandomInputMetadata.put("type", "object");
         queueRandomInputMetadata.put("required", new String[]{"count"});

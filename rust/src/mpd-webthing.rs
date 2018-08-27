@@ -687,7 +687,7 @@ impl MPDThing {
     fn new() -> MPDThing {
         let mut base = BaseThing::new(
             "MPD".to_owned(),
-            Some("musicPlayer".to_owned()),
+            Some(vec![]),
             Some("Music Player Daemon".to_owned()),
         );
 
@@ -723,6 +723,7 @@ impl MPDThing {
             "description": "Playback volume",
             "minimum": 0,
             "maximum": 100,
+            "label": "Volume",
         });
         let volume_description = volume_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -736,6 +737,7 @@ impl MPDThing {
         let repeat_description = json!({
             "type": "boolean",
             "description": "Repeat mode",
+            "label": "Repeat",
         });
         let repeat_description = repeat_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -749,6 +751,7 @@ impl MPDThing {
         let random_description = json!({
             "type": "boolean",
             "description": "Random mode",
+            "label": "Random",
         });
         let random_description = random_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -762,6 +765,7 @@ impl MPDThing {
         let state_description = json!({
             "type": "string",
             "description": "Current playback state",
+            "label": "State",
         });
         let state_description = state_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -775,6 +779,7 @@ impl MPDThing {
         let artist_description = json!({
             "type": "string",
             "description": "Artist of current song",
+            "label": "Artist",
         });
         let artist_description = artist_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -788,6 +793,7 @@ impl MPDThing {
         let album_description = json!({
             "type": "string",
             "description": "Album current song belongs to",
+            "label": "Album",
         });
         let album_description = album_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -801,6 +807,7 @@ impl MPDThing {
         let title_description = json!({
             "type": "string",
             "description": "Title of current song",
+            "label": "Title",
         });
         let title_description = title_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -813,6 +820,7 @@ impl MPDThing {
         // Add a 'play' action.
         let play_metadata = json!({
             "description": "Start playback",
+            "label": "Play",
         });
         let play_metadata = play_metadata.as_object().unwrap().clone();
         base.add_available_action("play".to_owned(), play_metadata);
@@ -820,6 +828,7 @@ impl MPDThing {
         // Add a 'pause' action.
         let pause_metadata = json!({
             "description": "Pause playback",
+            "label": "Pause",
         });
         let pause_metadata = pause_metadata.as_object().unwrap().clone();
         base.add_available_action("pause".to_owned(), pause_metadata);
@@ -827,6 +836,7 @@ impl MPDThing {
         // Add a 'stop' action.
         let stop_metadata = json!({
             "description": "Stop playback",
+            "label": "Stop",
         });
         let stop_metadata = stop_metadata.as_object().unwrap().clone();
         base.add_available_action("stop".to_owned(), stop_metadata);
@@ -834,6 +844,7 @@ impl MPDThing {
         // Add a 'next' action.
         let next_metadata = json!({
             "description": "Skip to next song",
+            "label": "Next",
         });
         let next_metadata = next_metadata.as_object().unwrap().clone();
         base.add_available_action("next".to_owned(), next_metadata);
@@ -841,6 +852,7 @@ impl MPDThing {
         // Add a 'previous' action.
         let previous_metadata = json!({
             "description": "Skip to previous song",
+            "label": "Previous",
         });
         let previous_metadata = previous_metadata.as_object().unwrap().clone();
         base.add_available_action("previous".to_owned(), previous_metadata);
@@ -848,6 +860,7 @@ impl MPDThing {
         // Add a 'queueRandom' action.
         let queue_random_metadata = json!({
             "description": "Queue a series of random songs",
+            "label": "Queue Random",
             "input": {
                 "type": "object",
                 "required": [
@@ -1260,7 +1273,11 @@ impl Thing for MPDThing {
         self.base.get_name()
     }
 
-    fn get_type(&self) -> String {
+    fn get_context(&self) -> String {
+        self.base.get_context()
+    }
+
+    fn get_type(&self) -> Vec<String> {
         self.base.get_type()
     }
 
@@ -1272,12 +1289,12 @@ impl Thing for MPDThing {
         self.base.get_property_descriptions()
     }
 
-    fn get_action_descriptions(&self) -> serde_json::Value {
-        self.base.get_action_descriptions()
+    fn get_action_descriptions(&self, action_name: Option<String>) -> serde_json::Value {
+        self.base.get_action_descriptions(action_name)
     }
 
-    fn get_event_descriptions(&self) -> serde_json::Value {
-        self.base.get_event_descriptions()
+    fn get_event_descriptions(&self, event_name: Option<String>) -> serde_json::Value {
+        self.base.get_event_descriptions(event_name)
     }
 
     fn add_property(&mut self, property: Box<Property>) {
@@ -1294,6 +1311,10 @@ impl Thing for MPDThing {
 
     fn get_property(&self, property_name: String) -> Option<serde_json::Value> {
         self.base.get_property(property_name)
+    }
+
+    fn get_properties(&self) -> serde_json::Map<String, serde_json::Value> {
+        self.base.get_properties()
     }
 
     fn has_property(&self, property_name: String) -> bool {
@@ -1471,6 +1492,7 @@ fn main() {
     let server = WebThingServer::new(
         ThingsType::Single(thing),
         Some(8888),
+        None,
         None,
         Box::new(Generator),
     );
