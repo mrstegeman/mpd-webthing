@@ -128,10 +128,12 @@ class MPDThing(Thing):
                      'volume',
                      Value(self.get_volume(status), self.set_volume),
                      metadata={
+                         '@type': 'LevelProperty',
                          'type': 'number',
                          'description': 'Playback volume',
                          'minimum': 0,
                          'maximum': 100,
+                         'unit': 'percent',
                          'label': 'Volume',
                      }))
 
@@ -141,6 +143,7 @@ class MPDThing(Thing):
                      'repeat',
                      Value(self.get_repeat(status), self.set_repeat),
                      metadata={
+                         '@type': 'BooleanProperty',
                          'type': 'boolean',
                          'description': 'Repeat mode',
                          'label': 'Repeat',
@@ -152,6 +155,7 @@ class MPDThing(Thing):
                      'random',
                      Value(self.get_random(status), self.set_random),
                      metadata={
+                         '@type': 'BooleanProperty',
                          'type': 'boolean',
                          'description': 'Random mode',
                          'label': 'Random',
@@ -164,8 +168,14 @@ class MPDThing(Thing):
                      Value(self.get_state(status)),
                      metadata={
                          'type': 'string',
+                         'enum': [
+                             'play',
+                             'stop',
+                             'pause',
+                         ],
                          'description': 'Current playback state',
                          'label': 'State',
+                         'readOnly': True,
                      }))
 
         # Add an 'artist' property.
@@ -177,6 +187,7 @@ class MPDThing(Thing):
                          'type': 'string',
                          'description': 'Artist of current song',
                          'label': 'Artist',
+                         'readOnly': True,
                      }))
 
         # Add an 'album' property.
@@ -188,6 +199,7 @@ class MPDThing(Thing):
                          'type': 'string',
                          'description': 'Album current song belongs to',
                          'label': 'Album',
+                         'readOnly': True,
                      }))
 
         # Add a 'title' property.
@@ -199,6 +211,7 @@ class MPDThing(Thing):
                          'type': 'string',
                          'description': 'Title of current song',
                          'label': 'Title',
+                         'readOnly': True,
                      }))
 
         # Add a 'play' action.

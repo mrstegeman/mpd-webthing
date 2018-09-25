@@ -719,10 +719,12 @@ impl MPDThing {
 
         // Add a 'volume' property.
         let volume_description = json!({
+            "@type": "LevelProperty",
             "type": "number",
             "description": "Playback volume",
             "minimum": 0,
             "maximum": 100,
+            "unit": "percent",
             "label": "Volume",
         });
         let volume_description = volume_description.as_object().unwrap().clone();
@@ -735,6 +737,7 @@ impl MPDThing {
 
         // Add a 'repeat' property.
         let repeat_description = json!({
+            "@type": "BooleanProperty",
             "type": "boolean",
             "description": "Repeat mode",
             "label": "Repeat",
@@ -749,6 +752,7 @@ impl MPDThing {
 
         // Add a 'random' property.
         let random_description = json!({
+            "@type": "BooleanProperty",
             "type": "boolean",
             "description": "Random mode",
             "label": "Random",
@@ -764,8 +768,14 @@ impl MPDThing {
         // Add a 'state' property, which indicates playback state.
         let state_description = json!({
             "type": "string",
+            "enum": vec![
+                "play",
+                "stop",
+                "pause",
+            ],
             "description": "Current playback state",
             "label": "State",
+            "readOnly": true,
         });
         let state_description = state_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -780,6 +790,7 @@ impl MPDThing {
             "type": "string",
             "description": "Artist of current song",
             "label": "Artist",
+            "readOnly": true,
         });
         let artist_description = artist_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -794,6 +805,7 @@ impl MPDThing {
             "type": "string",
             "description": "Album current song belongs to",
             "label": "Album",
+            "readOnly": true,
         });
         let album_description = album_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -808,6 +820,7 @@ impl MPDThing {
             "type": "string",
             "description": "Title of current song",
             "label": "Title",
+            "readOnly": true,
         });
         let title_description = title_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(

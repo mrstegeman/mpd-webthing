@@ -234,10 +234,12 @@ class MPDThing extends Thing {
                          'volume',
                          new Value(v, this.setVolume.bind(this)),
                          {
+                           '@type': 'LevelProperty',
                            type: 'number',
                            description: 'Playback volume',
                            minimum: 0,
                            maximum: 100,
+                           unit: 'percent',
                            label: 'Volume',
                          }));
         });
@@ -249,6 +251,7 @@ class MPDThing extends Thing {
                          'repeat',
                          new Value(r, this.setRepeat.bind(this)),
                          {
+                           '@type': 'BooleanProperty',
                            type: 'boolean',
                            description: 'Repeat mode',
                            label: 'Repeat',
@@ -262,6 +265,7 @@ class MPDThing extends Thing {
                          'random',
                          new Value(r, this.setRandom.bind(this)),
                          {
+                           '@type': 'BooleanProperty',
                            type: 'boolean',
                            description: 'Random mode',
                            label: 'Random',
@@ -276,8 +280,14 @@ class MPDThing extends Thing {
                          new Value(s),
                          {
                            type: 'string',
+                           enum: [
+                             'play',
+                             'stop',
+                             'pause',
+                           ],
                            description: 'Current playback state',
                            label: 'State',
+                           readOnly: true,
                          }));
         });
       });
@@ -298,6 +308,7 @@ class MPDThing extends Thing {
                            type: 'string',
                            description: 'Artist of current song',
                            label: 'Artist',
+                           readOnly: true,
                          }));
         });
 
@@ -311,6 +322,7 @@ class MPDThing extends Thing {
                            type: 'string',
                            description: 'Album current song belongs to',
                            label: 'Album',
+                           readOnly: true,
                          }));
         });
 
@@ -324,6 +336,7 @@ class MPDThing extends Thing {
                            type: 'string',
                            description: 'Title of current song',
                            label: 'Title',
+                           readOnly: true,
                          }));
         });
       });

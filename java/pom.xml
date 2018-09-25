@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.mozilla.iot</groupId>
             <artifactId>webthing</artifactId>
-            <version>LATEST</version>
+            <version>0.8.1</version>
         </dependency>
         <dependency>
             <groupId>net.thejavashop</groupId>

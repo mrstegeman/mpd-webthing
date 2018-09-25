@@ -19,6 +19,7 @@ import org.mozilla.iot.webthing.WebThingServer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -90,10 +91,12 @@ public class MPDThing extends Thing {
 
         // Add a 'volume' property.
         Map<String, Object> volumeMetadata = new HashMap<>();
+        volumeMetadata.put("@type", "LevelProperty");
         volumeMetadata.put("type", "number");
         volumeMetadata.put("description", "Playback volume");
         volumeMetadata.put("minimum", 0);
         volumeMetadata.put("maximum", 100);
+        volumeMetadata.put("unit", "percent");
         volumeMetadata.put("label", "Volume");
         this.volumeValue =
                 new Value(status.getVolume(), v -> this.setVolume((int)v));
@@ -104,6 +107,7 @@ public class MPDThing extends Thing {
 
         // Add a 'repeat' property.
         Map<String, Object> repeatMetadata = new HashMap<>();
+        repeatMetadata.put("@type", "BooleanProperty");
         repeatMetadata.put("type", "boolean");
         repeatMetadata.put("description", "Repeat mode");
         repeatMetadata.put("label", "Repeat");
@@ -116,6 +120,7 @@ public class MPDThing extends Thing {
 
         // Add a 'random' property.
         Map<String, Object> randomMetadata = new HashMap<>();
+        randomMetadata.put("@type", "BooleanProperty");
         randomMetadata.put("type", "boolean");
         randomMetadata.put("description", "Random mode");
         randomMetadata.put("label", "Random");
@@ -129,8 +134,10 @@ public class MPDThing extends Thing {
         // Add a 'state' property, which indicates playback state.
         Map<String, Object> stateMetadata = new HashMap<>();
         stateMetadata.put("type", "string");
+        stateMetadata.put("enum", Arrays.asList("play", "pause", "stop"));
         stateMetadata.put("description", "Current playback state");
         stateMetadata.put("label", "State");
+        stateMetadata.put("readOnly", true);
         this.stateValue = new Value(status.getState());
         this.addProperty(new Property(this,
                                       "state",
@@ -144,6 +151,7 @@ public class MPDThing extends Thing {
         artistMetadata.put("type", "string");
         artistMetadata.put("description", "Artist of current song");
         artistMetadata.put("label", "Artist");
+        artistMetadata.put("readOnly", true);
         this.artistValue = new Value(song.getArtistName());
         this.addProperty(new Property(this,
                                       "artist",
@@ -155,6 +163,7 @@ public class MPDThing extends Thing {
         albumMetadata.put("type", "string");
         albumMetadata.put("description", "Album current song belongs to");
         albumMetadata.put("label", "Album");
+        albumMetadata.put("readOnly", true);
         this.albumValue = new Value(song.getAlbumName());
         this.addProperty(new Property(this,
                                       "album",
@@ -166,6 +175,7 @@ public class MPDThing extends Thing {
         titleMetadata.put("type", "string");
         titleMetadata.put("description", "Title of current song");
         titleMetadata.put("label", "Title");
+        titleMetadata.put("readOnly", true);
         this.titleValue = new Value(song.getTitle());
         this.addProperty(new Property(this,
                                       "title",
