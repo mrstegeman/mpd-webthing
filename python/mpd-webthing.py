@@ -134,7 +134,7 @@ class MPDThing(Thing):
                          'minimum': 0,
                          'maximum': 100,
                          'unit': 'percent',
-                         'label': 'Volume',
+                         'title': 'Volume',
                      }))
 
         # Add a 'repeat' property.
@@ -146,7 +146,7 @@ class MPDThing(Thing):
                          '@type': 'BooleanProperty',
                          'type': 'boolean',
                          'description': 'Repeat mode',
-                         'label': 'Repeat',
+                         'title': 'Repeat',
                      }))
 
         # Add a 'random' property.
@@ -158,7 +158,7 @@ class MPDThing(Thing):
                          '@type': 'BooleanProperty',
                          'type': 'boolean',
                          'description': 'Random mode',
-                         'label': 'Random',
+                         'title': 'Random',
                      }))
 
         # Add a 'state' property, which indicates playback state.
@@ -174,7 +174,7 @@ class MPDThing(Thing):
                              'pause',
                          ],
                          'description': 'Current playback state',
-                         'label': 'State',
+                         'title': 'State',
                          'readOnly': True,
                      }))
 
@@ -186,7 +186,7 @@ class MPDThing(Thing):
                      metadata={
                          'type': 'string',
                          'description': 'Artist of current song',
-                         'label': 'Artist',
+                         'title': 'Artist',
                          'readOnly': True,
                      }))
 
@@ -198,7 +198,7 @@ class MPDThing(Thing):
                      metadata={
                          'type': 'string',
                          'description': 'Album current song belongs to',
-                         'label': 'Album',
+                         'title': 'Album',
                          'readOnly': True,
                      }))
 
@@ -210,7 +210,7 @@ class MPDThing(Thing):
                      metadata={
                          'type': 'string',
                          'description': 'Title of current song',
-                         'label': 'Title',
+                         'title': 'Title',
                          'readOnly': True,
                      }))
 
@@ -219,7 +219,7 @@ class MPDThing(Thing):
             'play',
             {
                 'description': 'Start playback',
-                'label': 'Play',
+                'title': 'Play',
             },
             PlayAction)
 
@@ -228,7 +228,7 @@ class MPDThing(Thing):
             'pause',
             {
                 'description': 'Pause playback',
-                'label': 'Pause',
+                'title': 'Pause',
             },
             PauseAction)
 
@@ -237,7 +237,7 @@ class MPDThing(Thing):
             'stop',
             {
                 'description': 'Stop playback',
-                'label': 'Stop',
+                'title': 'Stop',
             },
             StopAction)
 
@@ -246,7 +246,7 @@ class MPDThing(Thing):
             'next',
             {
                 'description': 'Skip to next song',
-                'label': 'Next',
+                'title': 'Next',
             },
             NextAction)
 
@@ -255,7 +255,7 @@ class MPDThing(Thing):
             'previous',
             {
                 'description': 'Skip to previous song',
-                'label': 'Previous',
+                'title': 'Previous',
             },
             PreviousAction)
 
@@ -264,7 +264,7 @@ class MPDThing(Thing):
             'queueRandom',
             {
                 'description': 'Queue a series of random songs',
-                'label': 'Queue Random',
+                'title': 'Queue Random',
                 'input': {
                     'type': 'object',
                     'required': [

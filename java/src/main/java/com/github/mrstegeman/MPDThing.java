@@ -9,6 +9,7 @@ import org.bff.javampd.playlist.PlaylistBasicChangeEvent;
 import org.bff.javampd.server.MPD;
 import org.bff.javampd.server.ServerStatus;
 import org.bff.javampd.song.MPDSong;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mozilla.iot.webthing.Action;
 import org.mozilla.iot.webthing.Event;
@@ -46,7 +47,7 @@ public class MPDThing extends Thing {
      * Initialize the thing.
      */
     public MPDThing() {
-        super("MPD", new ArrayList<>(), "Music Player Daemon");
+        super("MPD", new JSONArray(), "Music Player Daemon");
 
         // Connect to MPD.
         this.client = new MPD.Builder().server("localhost").port(6600).build();
@@ -90,7 +91,7 @@ public class MPDThing extends Thing {
         ServerStatus status = this.client.getServerStatus();
 
         // Add a 'volume' property.
-        Map<String, Object> volumeMetadata = new HashMap<>();
+        JSONObject volumeMetadata = new JSONObject();
         volumeMetadata.put("@type", "LevelProperty");
         volumeMetadata.put("type", "number");
         volumeMetadata.put("description", "Playback volume");
@@ -106,7 +107,7 @@ public class MPDThing extends Thing {
                                       volumeMetadata));
 
         // Add a 'repeat' property.
-        Map<String, Object> repeatMetadata = new HashMap<>();
+        JSONObject repeatMetadata = new JSONObject();
         repeatMetadata.put("@type", "BooleanProperty");
         repeatMetadata.put("type", "boolean");
         repeatMetadata.put("description", "Repeat mode");
@@ -119,7 +120,7 @@ public class MPDThing extends Thing {
                                       repeatMetadata));
 
         // Add a 'random' property.
-        Map<String, Object> randomMetadata = new HashMap<>();
+        JSONObject randomMetadata = new JSONObject();
         randomMetadata.put("@type", "BooleanProperty");
         randomMetadata.put("type", "boolean");
         randomMetadata.put("description", "Random mode");
@@ -132,7 +133,7 @@ public class MPDThing extends Thing {
                                       randomMetadata));
 
         // Add a 'state' property, which indicates playback state.
-        Map<String, Object> stateMetadata = new HashMap<>();
+        JSONObject stateMetadata = new JSONObject();
         stateMetadata.put("type", "string");
         stateMetadata.put("enum", Arrays.asList("play", "pause", "stop"));
         stateMetadata.put("description", "Current playback state");
@@ -147,7 +148,7 @@ public class MPDThing extends Thing {
         MPDSong song = this.client.getPlayer().getCurrentSong();
 
         // Add an 'artist' property.
-        Map<String, Object> artistMetadata = new HashMap<>();
+        JSONObject artistMetadata = new JSONObject();
         artistMetadata.put("type", "string");
         artistMetadata.put("description", "Artist of current song");
         artistMetadata.put("label", "Artist");
@@ -159,7 +160,7 @@ public class MPDThing extends Thing {
                                       artistMetadata));
 
         // Add an 'album' property.
-        Map<String, Object> albumMetadata = new HashMap<>();
+        JSONObject albumMetadata = new JSONObject();
         albumMetadata.put("type", "string");
         albumMetadata.put("description", "Album current song belongs to");
         albumMetadata.put("label", "Album");
@@ -171,7 +172,7 @@ public class MPDThing extends Thing {
                                       albumMetadata));
 
         // Add a 'title' property.
-        Map<String, Object> titleMetadata = new HashMap<>();
+        JSONObject titleMetadata = new JSONObject();
         titleMetadata.put("type", "string");
         titleMetadata.put("description", "Title of current song");
         titleMetadata.put("label", "Title");
@@ -183,31 +184,31 @@ public class MPDThing extends Thing {
                                       titleMetadata));
 
         // Add a 'play' action.
-        Map<String, Object> playMetadata = new HashMap<>();
+        JSONObject playMetadata = new JSONObject();
         playMetadata.put("description", "Start playback");
         playMetadata.put("label", "Play");
         this.addAvailableAction("play", playMetadata, PlayAction.class);
 
         // Add a 'pause' action.
-        Map<String, Object> pauseMetadata = new HashMap<>();
+        JSONObject pauseMetadata = new JSONObject();
         pauseMetadata.put("description", "Pause playback");
         pauseMetadata.put("label", "Pause");
         this.addAvailableAction("pause", pauseMetadata, PauseAction.class);
 
         // Add a 'stop' action.
-        Map<String, Object> stopMetadata = new HashMap<>();
+        JSONObject stopMetadata = new JSONObject();
         stopMetadata.put("description", "Stop playback");
         stopMetadata.put("label", "Stop");
         this.addAvailableAction("stop", stopMetadata, StopAction.class);
 
         // Add a 'next' option.
-        Map<String, Object> nextMetadata = new HashMap<>();
+        JSONObject nextMetadata = new JSONObject();
         nextMetadata.put("description", "Skip to next song");
         nextMetadata.put("label", "Next");
         this.addAvailableAction("next", nextMetadata, NextAction.class);
 
         // Add a 'previous' action.
-        Map<String, Object> previousMetadata = new HashMap<>();
+        JSONObject previousMetadata = new JSONObject();
         previousMetadata.put("description", "Skip to previous song");
         previousMetadata.put("label", "Previous");
         this.addAvailableAction("previous",
@@ -215,7 +216,7 @@ public class MPDThing extends Thing {
                                 PreviousAction.class);
 
         // Add a 'queueRandom' action.
-        Map<String, Object> queueRandomMetadata = new HashMap<>();
+        JSONObject queueRandomMetadata = new JSONObject();
         queueRandomMetadata.put("description",
                                 "Queue a series of random songs");
         queueRandomMetadata.put("label", "Queue Random");
@@ -238,7 +239,7 @@ public class MPDThing extends Thing {
                                 QueueRandomAction.class);
 
         // Add a 'playlistUpdated' event.
-        Map<String, Object> playlistUpdatedMetadata = new HashMap<>();
+        JSONObject playlistUpdatedMetadata = new JSONObject();
         playlistUpdatedMetadata.put("description",
                                     "The current playlist has been updated");
         playlistUpdatedMetadata.put("type", "string");

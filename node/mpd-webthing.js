@@ -240,7 +240,7 @@ class MPDThing extends Thing {
                            minimum: 0,
                            maximum: 100,
                            unit: 'percent',
-                           label: 'Volume',
+                           title: 'Volume',
                          }));
         });
 
@@ -254,7 +254,7 @@ class MPDThing extends Thing {
                            '@type': 'BooleanProperty',
                            type: 'boolean',
                            description: 'Repeat mode',
-                           label: 'Repeat',
+                           title: 'Repeat',
                          }));
         });
 
@@ -268,7 +268,7 @@ class MPDThing extends Thing {
                            '@type': 'BooleanProperty',
                            type: 'boolean',
                            description: 'Random mode',
-                           label: 'Random',
+                           title: 'Random',
                          }));
         });
 
@@ -286,7 +286,7 @@ class MPDThing extends Thing {
                              'pause',
                            ],
                            description: 'Current playback state',
-                           label: 'State',
+                           title: 'State',
                            readOnly: true,
                          }));
         });
@@ -307,7 +307,7 @@ class MPDThing extends Thing {
                          {
                            type: 'string',
                            description: 'Artist of current song',
-                           label: 'Artist',
+                           title: 'Artist',
                            readOnly: true,
                          }));
         });
@@ -321,7 +321,7 @@ class MPDThing extends Thing {
                          {
                            type: 'string',
                            description: 'Album current song belongs to',
-                           label: 'Album',
+                           title: 'Album',
                            readOnly: true,
                          }));
         });
@@ -335,7 +335,7 @@ class MPDThing extends Thing {
                          {
                            type: 'string',
                            description: 'Title of current song',
-                           label: 'Title',
+                           title: 'Title',
                            readOnly: true,
                          }));
         });
@@ -345,7 +345,7 @@ class MPDThing extends Thing {
       this.addAvailableAction('play',
                               {
                                 description: 'Start playback',
-                                label: 'Play',
+                                title: 'Play',
                               },
                               PlayAction);
 
@@ -353,7 +353,7 @@ class MPDThing extends Thing {
       this.addAvailableAction('pause',
                               {
                                 description: 'Pause playback',
-                                label: 'Pause',
+                                title: 'Pause',
                               },
                               PauseAction);
 
@@ -361,7 +361,7 @@ class MPDThing extends Thing {
       this.addAvailableAction('stop',
                               {
                                 description: 'Stop playback',
-                                label: 'Stop',
+                                title: 'Stop',
                               },
                               StopAction);
 
@@ -369,7 +369,7 @@ class MPDThing extends Thing {
       this.addAvailableAction('next',
                               {
                                 description: 'Skip to next song',
-                                label: 'Next',
+                                title: 'Next',
                               },
                               NextAction);
 
@@ -377,7 +377,7 @@ class MPDThing extends Thing {
       this.addAvailableAction('previous',
                               {
                                 description: 'Skip to previous song',
-                                label: 'Previous',
+                                title: 'Previous',
                               },
                               PreviousAction);
 
@@ -386,7 +386,7 @@ class MPDThing extends Thing {
         'queueRandom',
         {
           description: 'Queue a series of random songs',
-          label: 'Queue Random',
+          title: 'Queue Random',
           input: {
             type: 'object',
             required: [

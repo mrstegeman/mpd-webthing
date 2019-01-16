@@ -725,7 +725,7 @@ impl MPDThing {
             "minimum": 0,
             "maximum": 100,
             "unit": "percent",
-            "label": "Volume",
+            "title": "Volume",
         });
         let volume_description = volume_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -740,7 +740,7 @@ impl MPDThing {
             "@type": "BooleanProperty",
             "type": "boolean",
             "description": "Repeat mode",
-            "label": "Repeat",
+            "title": "Repeat",
         });
         let repeat_description = repeat_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -755,7 +755,7 @@ impl MPDThing {
             "@type": "BooleanProperty",
             "type": "boolean",
             "description": "Random mode",
-            "label": "Random",
+            "title": "Random",
         });
         let random_description = random_description.as_object().unwrap().clone();
         base.add_property(Box::new(BaseProperty::new(
@@ -774,7 +774,7 @@ impl MPDThing {
                 "pause",
             ],
             "description": "Current playback state",
-            "label": "State",
+            "title": "State",
             "readOnly": true,
         });
         let state_description = state_description.as_object().unwrap().clone();
@@ -789,7 +789,7 @@ impl MPDThing {
         let artist_description = json!({
             "type": "string",
             "description": "Artist of current song",
-            "label": "Artist",
+            "title": "Artist",
             "readOnly": true,
         });
         let artist_description = artist_description.as_object().unwrap().clone();
@@ -804,7 +804,7 @@ impl MPDThing {
         let album_description = json!({
             "type": "string",
             "description": "Album current song belongs to",
-            "label": "Album",
+            "title": "Album",
             "readOnly": true,
         });
         let album_description = album_description.as_object().unwrap().clone();
@@ -819,7 +819,7 @@ impl MPDThing {
         let title_description = json!({
             "type": "string",
             "description": "Title of current song",
-            "label": "Title",
+            "title": "Title",
             "readOnly": true,
         });
         let title_description = title_description.as_object().unwrap().clone();
@@ -833,7 +833,7 @@ impl MPDThing {
         // Add a 'play' action.
         let play_metadata = json!({
             "description": "Start playback",
-            "label": "Play",
+            "title": "Play",
         });
         let play_metadata = play_metadata.as_object().unwrap().clone();
         base.add_available_action("play".to_owned(), play_metadata);
@@ -841,7 +841,7 @@ impl MPDThing {
         // Add a 'pause' action.
         let pause_metadata = json!({
             "description": "Pause playback",
-            "label": "Pause",
+            "title": "Pause",
         });
         let pause_metadata = pause_metadata.as_object().unwrap().clone();
         base.add_available_action("pause".to_owned(), pause_metadata);
@@ -849,7 +849,7 @@ impl MPDThing {
         // Add a 'stop' action.
         let stop_metadata = json!({
             "description": "Stop playback",
-            "label": "Stop",
+            "title": "Stop",
         });
         let stop_metadata = stop_metadata.as_object().unwrap().clone();
         base.add_available_action("stop".to_owned(), stop_metadata);
@@ -857,7 +857,7 @@ impl MPDThing {
         // Add a 'next' action.
         let next_metadata = json!({
             "description": "Skip to next song",
-            "label": "Next",
+            "title": "Next",
         });
         let next_metadata = next_metadata.as_object().unwrap().clone();
         base.add_available_action("next".to_owned(), next_metadata);
@@ -865,7 +865,7 @@ impl MPDThing {
         // Add a 'previous' action.
         let previous_metadata = json!({
             "description": "Skip to previous song",
-            "label": "Previous",
+            "title": "Previous",
         });
         let previous_metadata = previous_metadata.as_object().unwrap().clone();
         base.add_available_action("previous".to_owned(), previous_metadata);
@@ -873,7 +873,7 @@ impl MPDThing {
         // Add a 'queueRandom' action.
         let queue_random_metadata = json!({
             "description": "Queue a series of random songs",
-            "label": "Queue Random",
+            "title": "Queue Random",
             "input": {
                 "type": "object",
                 "required": [
@@ -1262,20 +1262,12 @@ impl Thing for MPDThing {
         self.base.get_href_prefix()
     }
 
-    fn get_ws_href(&self) -> Option<String> {
-        self.base.get_ws_href()
-    }
-
     fn get_ui_href(&self) -> Option<String> {
         self.base.get_ui_href()
     }
 
     fn set_href_prefix(&mut self, prefix: String) {
         self.base.set_href_prefix(prefix)
-    }
-
-    fn set_ws_href(&mut self, href: String) {
-        self.base.set_ws_href(href)
     }
 
     fn set_ui_href(&mut self, href: String) {
@@ -1502,12 +1494,14 @@ fn main() {
         }
     });
 
-    let server = WebThingServer::new(
+    let mut server = WebThingServer::new(
         ThingsType::Single(thing),
         Some(8888),
         None,
         None,
         Box::new(Generator),
+        None,
     );
+    server.create();
     server.start();
 }
