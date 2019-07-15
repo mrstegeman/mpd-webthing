@@ -167,7 +167,7 @@ class MPDThing extends Thing {
    * Initialize the thing.
    */
   constructor() {
-    super('MPD', [], 'Music Player Daemon');
+    super('urn:dev:ops:mpd', 'MPD', [], 'Music Player Daemon');
 
     // Connect to MPD.
     this.client = mpd.connect({host: 'localhost', port: 6600});

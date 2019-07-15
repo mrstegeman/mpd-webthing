@@ -47,7 +47,10 @@ public class MPDThing extends Thing {
      * Initialize the thing.
      */
     public MPDThing() {
-        super("MPD", new JSONArray(), "Music Player Daemon");
+        super("urn:dev:ops:mpd",
+              "MPD",
+              new JSONArray(),
+              "Music Player Daemon");
 
         // Connect to MPD.
         this.client = new MPD.Builder().server("localhost").port(6600).build();

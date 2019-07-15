@@ -107,7 +107,13 @@ class MPDThing(Thing):
 
     def __init__(self):
         """Initialize the thing."""
-        Thing.__init__(self, 'MPD', [], 'Music Player Daemon')
+        Thing.__init__(
+            self,
+            'urn:dev:ops:mpd',
+            'MPD',
+            [],
+            'Music Player Daemon'
+        )
 
         # Connect to MPD.
         self.client = MPDClient()

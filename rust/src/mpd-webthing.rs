@@ -686,6 +686,7 @@ struct MPDThing {
 impl MPDThing {
     fn new() -> MPDThing {
         let mut base = BaseThing::new(
+            "urn:dev:ops:mpd".to_owned(),
             "MPD".to_owned(),
             Some(vec![]),
             Some("Music Player Daemon".to_owned()),
@@ -1274,8 +1275,12 @@ impl Thing for MPDThing {
         self.base.set_ui_href(href)
     }
 
-    fn get_name(&self) -> String {
-        self.base.get_name()
+    fn get_id(&self) -> String {
+        self.base.get_id()
+    }
+
+    fn get_title(&self) -> String {
+        self.base.get_title()
     }
 
     fn get_context(&self) -> String {
@@ -1500,6 +1505,7 @@ fn main() {
         None,
         None,
         Box::new(Generator),
+        None,
         None,
     );
     server.create();
