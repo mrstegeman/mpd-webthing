@@ -1,16 +1,11 @@
-extern crate mpd;
-extern crate rand;
-#[macro_use]
-extern crate serde_json;
-extern crate uuid;
-extern crate webthing;
-
+use actix_rt;
 use mpd::client::Client;
 use mpd::error::Error;
 use mpd::search::{Query, Term};
 use mpd::song::Song;
 use mpd::status::{State, Status};
 use rand::Rng;
+use serde_json::json;
 use std::any::Any;
 use std::collections::BTreeMap;
 use std::sync::{Arc, RwLock, Weak};
@@ -28,7 +23,7 @@ struct PlayAction(BaseAction);
 impl PlayAction {
     fn new(
         input: Option<serde_json::Map<String, serde_json::Value>>,
-        thing: Weak<RwLock<Box<Thing>>>,
+        thing: Weak<RwLock<Box<dyn Thing>>>,
     ) -> PlayAction {
         PlayAction(BaseAction::new(
             Uuid::new_v4().to_string(),
@@ -72,7 +67,7 @@ impl Action for PlayAction {
         self.0.get_input()
     }
 
-    fn get_thing(&self) -> Option<Arc<RwLock<Box<Thing>>>> {
+    fn get_thing(&self) -> Option<Arc<RwLock<Box<dyn Thing>>>> {
         self.0.get_thing()
     }
 
@@ -121,7 +116,7 @@ struct PauseAction(BaseAction);
 impl PauseAction {
     fn new(
         input: Option<serde_json::Map<String, serde_json::Value>>,
-        thing: Weak<RwLock<Box<Thing>>>,
+        thing: Weak<RwLock<Box<dyn Thing>>>,
     ) -> PauseAction {
         PauseAction(BaseAction::new(
             Uuid::new_v4().to_string(),
@@ -165,7 +160,7 @@ impl Action for PauseAction {
         self.0.get_input()
     }
 
-    fn get_thing(&self) -> Option<Arc<RwLock<Box<Thing>>>> {
+    fn get_thing(&self) -> Option<Arc<RwLock<Box<dyn Thing>>>> {
         self.0.get_thing()
     }
 
@@ -214,7 +209,7 @@ struct StopAction(BaseAction);
 impl StopAction {
     fn new(
         input: Option<serde_json::Map<String, serde_json::Value>>,
-        thing: Weak<RwLock<Box<Thing>>>,
+        thing: Weak<RwLock<Box<dyn Thing>>>,
     ) -> StopAction {
         StopAction(BaseAction::new(
             Uuid::new_v4().to_string(),
@@ -258,7 +253,7 @@ impl Action for StopAction {
         self.0.get_input()
     }
 
-    fn get_thing(&self) -> Option<Arc<RwLock<Box<Thing>>>> {
+    fn get_thing(&self) -> Option<Arc<RwLock<Box<dyn Thing>>>> {
         self.0.get_thing()
     }
 
@@ -307,7 +302,7 @@ struct NextAction(BaseAction);
 impl NextAction {
     fn new(
         input: Option<serde_json::Map<String, serde_json::Value>>,
-        thing: Weak<RwLock<Box<Thing>>>,
+        thing: Weak<RwLock<Box<dyn Thing>>>,
     ) -> NextAction {
         NextAction(BaseAction::new(
             Uuid::new_v4().to_string(),
@@ -351,7 +346,7 @@ impl Action for NextAction {
         self.0.get_input()
     }
 
-    fn get_thing(&self) -> Option<Arc<RwLock<Box<Thing>>>> {
+    fn get_thing(&self) -> Option<Arc<RwLock<Box<dyn Thing>>>> {
         self.0.get_thing()
     }
 
@@ -400,7 +395,7 @@ struct PreviousAction(BaseAction);
 impl PreviousAction {
     fn new(
         input: Option<serde_json::Map<String, serde_json::Value>>,
-        thing: Weak<RwLock<Box<Thing>>>,
+        thing: Weak<RwLock<Box<dyn Thing>>>,
     ) -> PreviousAction {
         PreviousAction(BaseAction::new(
             Uuid::new_v4().to_string(),
@@ -444,7 +439,7 @@ impl Action for PreviousAction {
         self.0.get_input()
     }
 
-    fn get_thing(&self) -> Option<Arc<RwLock<Box<Thing>>>> {
+    fn get_thing(&self) -> Option<Arc<RwLock<Box<dyn Thing>>>> {
         self.0.get_thing()
     }
 
@@ -493,7 +488,7 @@ struct QueueRandomAction(BaseAction);
 impl QueueRandomAction {
     fn new(
         input: Option<serde_json::Map<String, serde_json::Value>>,
-        thing: Weak<RwLock<Box<Thing>>>,
+        thing: Weak<RwLock<Box<dyn Thing>>>,
     ) -> QueueRandomAction {
         QueueRandomAction(BaseAction::new(
             Uuid::new_v4().to_string(),
@@ -537,7 +532,7 @@ impl Action for QueueRandomAction {
         self.0.get_input()
     }
 
-    fn get_thing(&self) -> Option<Arc<RwLock<Box<Thing>>>> {
+    fn get_thing(&self) -> Option<Arc<RwLock<Box<dyn Thing>>>> {
         self.0.get_thing()
     }
 
@@ -579,9 +574,10 @@ impl Action for QueueRandomAction {
                 }
 
                 match MPDThing::get_playlist(&mut *client) {
-                    Ok(playlist) => {
-                        thing.add_event(Box::new(PlaylistUpdatedEvent::new(Some(json!(playlist)))))
-                    }
+                    Ok(playlist) => thing.add_event(Box::new(BaseEvent::new(
+                        "playlistUpdated".to_owned(),
+                        Some(json!(playlist)),
+                    ))),
                     Err(_) => (),
                 }
             }
@@ -653,28 +649,6 @@ impl ValueForwarder for RandomForwarder {
             },
             None => Err("Client reference disappeared"),
         }
-    }
-}
-
-pub struct PlaylistUpdatedEvent(BaseEvent);
-
-impl PlaylistUpdatedEvent {
-    fn new(data: Option<serde_json::Value>) -> PlaylistUpdatedEvent {
-        PlaylistUpdatedEvent(BaseEvent::new("playlistUpdated".to_owned(), data))
-    }
-}
-
-impl Event for PlaylistUpdatedEvent {
-    fn get_name(&self) -> String {
-        self.0.get_name()
-    }
-
-    fn get_data(&self) -> Option<serde_json::Value> {
-        self.0.get_data()
-    }
-
-    fn get_time(&self) -> String {
-        self.0.get_time()
     }
 }
 
@@ -996,7 +970,7 @@ impl MPDThing {
         });
 
         let updated = {
-            let prop = self.find_property("volume".to_owned()).unwrap();
+            let prop = self.find_property(&"volume".to_owned()).unwrap();
             if prop.get_value() != volume {
                 let _ = prop.set_cached_value(volume.clone());
                 true
@@ -1021,7 +995,7 @@ impl MPDThing {
         });
 
         let updated = {
-            let prop = self.find_property("random".to_owned()).unwrap();
+            let prop = self.find_property(&"random".to_owned()).unwrap();
             if prop.get_value() != random {
                 let _ = prop.set_cached_value(random.clone());
                 true
@@ -1046,7 +1020,7 @@ impl MPDThing {
         });
 
         let updated = {
-            let prop = self.find_property("repeat".to_owned()).unwrap();
+            let prop = self.find_property(&"repeat".to_owned()).unwrap();
             if prop.get_value() != repeat {
                 let _ = prop.set_cached_value(repeat.clone());
                 true
@@ -1071,7 +1045,7 @@ impl MPDThing {
         });
 
         let updated = {
-            let prop = self.find_property("state".to_owned()).unwrap();
+            let prop = self.find_property(&"state".to_owned()).unwrap();
             if prop.get_value() != state {
                 let _ = prop.set_cached_value(state.clone());
                 true
@@ -1096,7 +1070,7 @@ impl MPDThing {
         });
 
         let updated = {
-            let prop = self.find_property("artist".to_owned()).unwrap();
+            let prop = self.find_property(&"artist".to_owned()).unwrap();
             if prop.get_value() != artist {
                 let _ = prop.set_cached_value(artist.clone());
                 true
@@ -1121,7 +1095,7 @@ impl MPDThing {
         });
 
         let updated = {
-            let prop = self.find_property("album".to_owned()).unwrap();
+            let prop = self.find_property(&"album".to_owned()).unwrap();
             if prop.get_value() != album {
                 let _ = prop.set_cached_value(album.clone());
                 true
@@ -1146,7 +1120,7 @@ impl MPDThing {
         });
 
         let updated = {
-            let prop = self.find_property("title".to_owned()).unwrap();
+            let prop = self.find_property(&"title".to_owned()).unwrap();
             if prop.get_value() != title {
                 let _ = prop.set_cached_value(title.clone());
                 true
@@ -1247,11 +1221,11 @@ impl Thing for MPDThing {
         self.base.as_thing_description()
     }
 
-    fn as_any(&self) -> &Any {
+    fn as_any(&self) -> &dyn Any {
         self
     }
 
-    fn as_mut_any(&mut self) -> &mut Any {
+    fn as_mut_any(&mut self) -> &mut dyn Any {
         self
     }
 
@@ -1307,7 +1281,7 @@ impl Thing for MPDThing {
         self.base.get_event_descriptions(event_name)
     }
 
-    fn add_property(&mut self, property: Box<Property>) {
+    fn add_property(&mut self, property: Box<dyn Property>) {
         self.base.add_property(property)
     }
 
@@ -1315,11 +1289,11 @@ impl Thing for MPDThing {
         self.base.remove_property(property_name)
     }
 
-    fn find_property(&mut self, property_name: String) -> Option<&mut Box<Property>> {
+    fn find_property(&mut self, property_name: &String) -> Option<&mut Box<dyn Property>> {
         self.base.find_property(property_name)
     }
 
-    fn get_property(&self, property_name: String) -> Option<serde_json::Value> {
+    fn get_property(&self, property_name: &String) -> Option<serde_json::Value> {
         self.base.get_property(property_name)
     }
 
@@ -1327,7 +1301,7 @@ impl Thing for MPDThing {
         self.base.get_properties()
     }
 
-    fn has_property(&self, property_name: String) -> bool {
+    fn has_property(&self, property_name: &String) -> bool {
         self.base.has_property(property_name)
     }
 
@@ -1335,11 +1309,11 @@ impl Thing for MPDThing {
         &self,
         action_name: String,
         action_id: String,
-    ) -> Option<Arc<RwLock<Box<Action>>>> {
+    ) -> Option<Arc<RwLock<Box<dyn Action>>>> {
         self.base.get_action(action_name, action_id)
     }
 
-    fn add_event(&mut self, event: Box<Event>) {
+    fn add_event(&mut self, event: Box<dyn Event>) {
         self.base.add_event(event)
     }
 
@@ -1353,7 +1327,7 @@ impl Thing for MPDThing {
 
     fn add_action(
         &mut self,
-        action: Arc<RwLock<Box<Action>>>,
+        action: Arc<RwLock<Box<dyn Action>>>,
         input: Option<&serde_json::Value>,
     ) -> Result<(), &str> {
         self.base.add_action(action, input)
@@ -1421,10 +1395,10 @@ struct Generator;
 impl ActionGenerator for Generator {
     fn generate(
         &self,
-        thing: Weak<RwLock<Box<Thing>>>,
+        thing: Weak<RwLock<Box<dyn Thing>>>,
         name: String,
         input: Option<&serde_json::Value>,
-    ) -> Option<Box<Action>> {
+    ) -> Option<Box<dyn Action>> {
         let input = match input {
             Some(v) => match v.as_object() {
                 Some(o) => Some(o.clone()),
@@ -1446,8 +1420,10 @@ impl ActionGenerator for Generator {
     }
 }
 
-fn main() {
-    let thing: Arc<RwLock<Box<Thing + 'static>>> = Arc::new(RwLock::new(Box::new(MPDThing::new())));
+#[actix_rt::main]
+async fn main() -> std::io::Result<()> {
+    let thing: Arc<RwLock<Box<dyn Thing + 'static>>> =
+        Arc::new(RwLock::new(Box::new(MPDThing::new())));
     let cloned = thing.clone();
     let mut last_playlist = "".to_owned();
 
@@ -1467,7 +1443,10 @@ fn main() {
             Ok(playlist) => {
                 if playlist != last_playlist {
                     last_playlist = playlist.clone();
-                    thing.add_event(Box::new(PlaylistUpdatedEvent::new(Some(json!(playlist)))));
+                    thing.add_event(Box::new(BaseEvent::new(
+                        "playlistUpdated".to_owned(),
+                        Some(json!(playlist)),
+                    )));
                 }
             }
             Err(_) => (),
@@ -1506,8 +1485,6 @@ fn main() {
         None,
         Box::new(Generator),
         None,
-        None,
     );
-    server.create();
-    server.start();
+    server.start(None).await
 }
