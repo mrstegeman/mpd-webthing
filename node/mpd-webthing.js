@@ -229,19 +229,21 @@ class MPDThing extends Thing {
 
         // Add a 'volume' property.
         this.getVolume(status).then((v) => {
-          this.addProperty(
-            new Property(this,
-                         'volume',
-                         new Value(v, this.setVolume.bind(this)),
-                         {
-                           '@type': 'LevelProperty',
-                           type: 'number',
-                           description: 'Playback volume',
-                           minimum: 0,
-                           maximum: 100,
-                           unit: 'percent',
-                           title: 'Volume',
-                         }));
+          if (v !== null) {
+            this.addProperty(
+              new Property(this,
+                           'volume',
+                           new Value(v, this.setVolume.bind(this)),
+                           {
+                             '@type': 'LevelProperty',
+                             type: 'number',
+                             description: 'Playback volume',
+                             minimum: 0,
+                             maximum: 100,
+                             unit: 'percent',
+                             title: 'Volume',
+                           }));
+          }
         });
 
         // Add a 'repeat' property.
@@ -446,6 +448,10 @@ class MPDThing extends Thing {
     } else if (status === null) {
       return Promise.resolve(null);
     } else {
+      if (typeof status.volume === 'undefined' || status.volume === null) {
+        return Promise.resolve(null);
+      }
+
       return Promise.resolve(parseInt(status.volume));
     }
   }

@@ -129,19 +129,21 @@ class MPDThing(Thing):
         song = self.get_current_song()
 
         # Add a 'volume' property.
-        self.add_property(
-            Property(self,
-                     'volume',
-                     Value(self.get_volume(status), self.set_volume),
-                     metadata={
-                         '@type': 'LevelProperty',
-                         'type': 'number',
-                         'description': 'Playback volume',
-                         'minimum': 0,
-                         'maximum': 100,
-                         'unit': 'percent',
-                         'title': 'Volume',
-                     }))
+        volume = self.get_volume(status)
+        if volume is not None:
+            self.add_property(
+                Property(self,
+                         'volume',
+                         Value(volume, self.set_volume),
+                         metadata={
+                             '@type': 'LevelProperty',
+                             'type': 'number',
+                             'description': 'Playback volume',
+                             'minimum': 0,
+                             'maximum': 100,
+                             'unit': 'percent',
+                             'title': 'Volume',
+                         }))
 
         # Add a 'repeat' property.
         self.add_property(
@@ -323,6 +325,9 @@ class MPDThing(Thing):
             status = self.get_status()
             if status is None:
                 return None
+
+        if 'volume' not in status:
+            return None
 
         return int(status['volume'])
 

@@ -1,5 +1,11 @@
 package com.github.mrstegeman;
 
+import io.webthings.webthing.Action;
+import io.webthings.webthing.Event;
+import io.webthings.webthing.Property;
+import io.webthings.webthing.Thing;
+import io.webthings.webthing.Value;
+import io.webthings.webthing.WebThingServer;
 import org.apache.commons.collections.map.HashedMap;
 import org.bff.javampd.file.MPDFile;
 import org.bff.javampd.monitor.StandAloneMonitor;
@@ -11,12 +17,6 @@ import org.bff.javampd.server.ServerStatus;
 import org.bff.javampd.song.MPDSong;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.mozilla.iot.webthing.Action;
-import org.mozilla.iot.webthing.Event;
-import org.mozilla.iot.webthing.Property;
-import org.mozilla.iot.webthing.Thing;
-import org.mozilla.iot.webthing.Value;
-import org.mozilla.iot.webthing.WebThingServer;
 
 import java.io.IOException;
 import java.util.ArrayList;
